@@ -288,10 +288,12 @@
           </div>
 
           <div class="controls">
+            <button class="btn" id="exit" type="button">⟵ Гарах</button>
             <button class="btn" id="prev" type="button">⬆ Өмнөх</button>
             <button class="btn" id="next" type="button">⬇ Дараах</button>
             <div class="counter" id="counter">1 / 1</div>
           </div>
+
         </div>
 
         <div class="stage">
@@ -322,6 +324,8 @@
     const counter = document.getElementById("counter");
     const prevBtn = document.getElementById("prev");
     const nextBtn = document.getElementById("next");
+    const exitBtn = document.getElementById("exit");
+
 
     let i = 0;
     let lock = false;
@@ -428,6 +432,18 @@
     // ✅ Buttons (works)
     prevBtn.addEventListener("click", () => go(-1));
     nextBtn.addEventListener("click", () => go(1));
+    // ✅ Exit button (back to Google Sites home)
+      const RETURN_URL = "https://sites.google.com/view/bodisadva/home-mantra";
+      
+      exitBtn.addEventListener("click", () => {
+        try {
+          if (window.top !== window.self) {
+            window.top.location.href = RETURN_URL;
+            return;
+          }
+        } catch (e) {}
+        window.location.href = RETURN_URL;
+      });
 
     // wheel / trackpad
     let wheelAccum = 0;
