@@ -3,343 +3,339 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Sudra Viewer</title>
+  <title>Bodisadva — Sudra Reader</title>
 
   <style>
     :root{
-      --bg0:#070707;
-      --bg1:#0b0b0d;
-      --wood1:#2a1a10;
-      --wood2:#3b2415;
-      --paper:#f4e7cf;
-      --muted: rgba(255,255,255,.70);
-      --line: rgba(255,255,255,.10);
-      --radius: 22px;
+      --bg: #0b0c0f;
+      --panel: rgba(255,255,255,.06);
+      --panel2: rgba(255,255,255,.08);
+      --line: rgba(255,255,255,.12);
+      --text: rgba(255,255,255,.92);
+      --muted: rgba(255,255,255,.65);
+      --muted2: rgba(255,255,255,.45);
+      --radius: 18px;
+      --shadow: 0 18px 60px rgba(0,0,0,.55);
     }
 
-    html,body{
+    /* ===== Base ===== */
+    html, body{
       height:100%;
       margin:0;
-      background:
-        radial-gradient(1200px 600px at 50% 0%, rgba(255,200,120,.10), transparent 60%),
-        radial-gradient(900px 500px at 20% 20%, rgba(255,255,255,.06), transparent 55%),
-        linear-gradient(180deg, var(--bg0), var(--bg1));
-      color:#f3f3f4;
+      background: radial-gradient(900px 500px at 50% 0%, rgba(255,255,255,.06), transparent 60%), var(--bg);
+      color: var(--text);
       font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial;
-      overflow:hidden;
     }
+    *{ box-sizing:border-box; }
 
-    .wrap{
-      height:100%;
+    /* ===== Layout ===== */
+    .app{
+      min-height:100%;
       display:flex;
       align-items:center;
       justify-content:center;
       padding:18px;
-      box-sizing:border-box;
     }
 
-    .scene{
-      width:min(1020px, 100%);
-      height:min(92vh, 860px);
+    .shell{
+      width: min(980px, 100%);
+      height: min(88vh, 860px);
       position:relative;
+      border: 1px solid var(--line);
       border-radius: var(--radius);
-      overflow:hidden;
-      box-shadow: 0 30px 90px rgba(0,0,0,.60);
-      border: 1px solid rgba(255,255,255,.08);
-      background:
-        radial-gradient(900px 600px at 50% 10%, rgba(255,255,255,.08), transparent 60%),
-        linear-gradient(180deg, rgba(255,255,255,.04), rgba(255,255,255,.02));
-    }
-
-    /* Reader area */
-    .book{
-      position:absolute;
-      left:18px; right:18px; top:18px; bottom:158px;
-      border-radius: 20px;
-      background:
-        radial-gradient(1200px 700px at 50% 20%, rgba(255,225,175,.10), transparent 60%),
-        linear-gradient(180deg, rgba(0,0,0,.35), rgba(0,0,0,.18));
-      border:1px solid rgba(255,255,255,.10);
-      box-shadow: inset 0 1px 0 rgba(255,255,255,.08);
+      background: rgba(0,0,0,.25);
+      box-shadow: var(--shadow);
       overflow:hidden;
     }
 
-    /* Stand */
-    .stand{
-      position:absolute;
-      left:18px; right:18px; bottom:46px;
-      height:120px;
-      border-radius: 18px;
-      background:
-        linear-gradient(135deg, rgba(255,255,255,.06), transparent 35%),
-        linear-gradient(0deg, rgba(0,0,0,.55), rgba(0,0,0,.10)),
-        repeating-linear-gradient(90deg, rgba(255,255,255,.06) 0 6px, rgba(255,255,255,.02) 6px 14px),
-        linear-gradient(180deg, var(--wood2), var(--wood1));
-      border:1px solid rgba(255,255,255,.12);
-      box-shadow:
-        0 18px 40px rgba(0,0,0,.50),
-        inset 0 1px 0 rgba(255,255,255,.12);
-      transform: perspective(900px) rotateX(12deg);
-      transform-origin: bottom center;
-    }
-
-    /* Top bar */
+    /* ===== Topbar ===== */
     .topbar{
       position:absolute;
-      left:16px; right:16px; top:14px;
+      left:14px; right:14px; top:14px;
       display:flex;
       align-items:center;
       justify-content:space-between;
       gap:12px;
       padding:10px 12px;
       border-radius: 16px;
-      background: rgba(0,0,0,.40);
-      border:1px solid rgba(255,255,255,.12);
+      background: rgba(0,0,0,.35);
+      border:1px solid var(--line);
       backdrop-filter: blur(8px);
-      z-index: 50;
+      z-index: 10;
     }
-    .title{
+
+    .brand{
       display:flex;
       gap:10px;
       align-items:center;
       min-width:0;
     }
-    .badge{
-      width:26px; height:26px;
-      border-radius: 10px;
+    .brandIcon{
+      width:28px; height:28px;
+      border-radius: 12px;
       display:grid;
       place-items:center;
-      background: rgba(255,255,255,.07);
-      border:1px solid rgba(255,255,255,.12);
-      font-size:14px;
+      background: var(--panel);
+      border:1px solid var(--line);
       flex:0 0 auto;
     }
-    .txt{min-width:0;}
-    .h{
+    .brandText{
+      min-width:0;
+      line-height:1.1;
+    }
+    .brandTitle{
       font-weight:800;
-      letter-spacing:.2px;
       font-size:13px;
-      color:#f4f1ea;
       white-space:nowrap;
       overflow:hidden;
       text-overflow:ellipsis;
     }
-    .s{
+    .brandSub{
       font-size:12px;
-      color: rgba(255,255,255,.60);
+      color: var(--muted);
       white-space:nowrap;
       overflow:hidden;
       text-overflow:ellipsis;
-      margin-top:2px;
+      margin-top:3px;
     }
 
-    .controls{
+    .actions{
       display:flex;
       align-items:center;
       gap:8px;
       flex-wrap:wrap;
       justify-content:flex-end;
     }
+
     .btn{
       appearance:none;
-      border:1px solid rgba(255,255,255,.18);
-      background: rgba(255,255,255,.06);
-      color:#fff;
+      border:1px solid var(--line);
+      background: var(--panel);
+      color: var(--text);
       padding:8px 10px;
       border-radius: 14px;
-      cursor:pointer;
       font-weight:750;
       font-size:12px;
-      line-height:1;
+      cursor:pointer;
       user-select:none;
+      line-height:1;
     }
-    .btn:disabled{opacity:.35; cursor:not-allowed;}
+    .btn:disabled{ opacity:.35; cursor:not-allowed; }
+
     .counter{
-      font-size:12px;
-      color: rgba(255,255,255,.70);
       padding:8px 10px;
       border-radius: 14px;
-      background: rgba(255,255,255,.05);
-      border:1px solid rgba(255,255,255,.10);
-      min-width:64px;
+      border:1px solid var(--line);
+      background: var(--panel2);
+      color: var(--muted);
+      font-size:12px;
+      min-width:72px;
       text-align:center;
     }
 
-    /* Stage */
-    .stage{
+    /* Close button (X) */
+    .closeBtn{
+      width:36px;
+      display:grid;
+      place-items:center;
+      padding:8px 0;
+    }
+
+    /* ===== Viewer ===== */
+    .viewer{
       position:absolute;
       inset:0;
+      padding: 76px 16px 54px 16px; /* topbar + footer space */
       display:flex;
       align-items:center;
       justify-content:center;
-      padding:56px 18px 18px 18px;
-      box-sizing:border-box;
     }
 
     .paper{
-      width:min(860px, 100%);
+      width:100%;
       height:100%;
-      border-radius: 18px;
-      position:relative;
-      perspective: 1200px;
+      border-radius: 16px;
+      border:1px solid rgba(255,255,255,.08);
+      background: rgba(0,0,0,.22);
       display:flex;
       align-items:center;
       justify-content:center;
-    }
-
-    .paperFrame{
-      position:absolute;
-      inset:0;
-      border-radius: 18px;
-      background:
-        radial-gradient(900px 500px at 50% 10%, rgba(255,245,220,.18), transparent 60%),
-        linear-gradient(180deg, rgba(255,230,190,.10), rgba(0,0,0,.15));
-      border:1px solid rgba(255,255,255,.10);
-      box-shadow:
-        0 22px 70px rgba(0,0,0,.45),
-        inset 0 1px 0 rgba(255,255,255,.14);
-      pointer-events:none;
+      overflow:hidden;
     }
 
     img.page{
-      max-width:100%;
-      max-height:100%;
-      border-radius: 14px;
-      background: var(--paper);
-      box-shadow:
-        0 10px 40px rgba(0,0,0,.45),
-        inset 0 0 0 1px rgba(0,0,0,.06);
+      max-width: 100%;
+      max-height: 100%;
+      width:auto;
+      height:auto;
+      object-fit: contain;      /* ✅ бүтнээр нь харна */
+      border-radius: 12px;
+      background: rgba(255,255,255,.02);
+      box-shadow: 0 10px 30px rgba(0,0,0,.45);
       user-select:none;
       -webkit-user-drag:none;
       transform: translateZ(0);
     }
 
-    /* Flip overlay */
-    .flipOverlay{
-      position:absolute;
-      inset:0;
-      border-radius: 18px;
-      overflow:hidden;
-      pointer-events:none;
-    }
-    .flipSheet{
-      position:absolute;
-      inset:0;
-      transform-origin: top center;
-      border-radius: 14px;
-      overflow:hidden;
-      background: var(--paper);
-      box-shadow: 0 18px 60px rgba(0,0,0,.45);
-      will-change: transform;
-    }
-    .flipSheet img{
-      width:100%;
-      height:100%;
-      object-fit:contain;
-      display:block;
-      background: var(--paper);
-    }
-    .foldShadow{
-      position:absolute;
-      inset:0;
-      background: linear-gradient(180deg, rgba(0,0,0,.62), rgba(0,0,0,0) 58%);
-      opacity:0;
-      will-change: opacity;
-    }
-
-    /* Footer (always visible) */
+    /* ===== Footer ===== */
     .footer{
       position:absolute;
-      left:18px; right:18px; bottom:18px;
+      left:14px; right:14px; bottom:12px;
       display:flex;
       align-items:center;
       justify-content:center;
       gap:10px;
+      color: var(--muted2);
       font-size:12px;
-      color: rgba(255,255,255,.72);
-      z-index: 60;            /* 👈 book/stand дээрээс гаргаж ирнэ */
+      z-index:10;
       pointer-events:none;
     }
-    .footer b{color:#fff; font-weight:850;}
-    .dot{width:5px;height:5px;border-radius:99px;background:rgba(255,255,255,.35);}
+    .footer b{ color: var(--text); font-weight:850; }
+    .dot{ width:5px; height:5px; border-radius:99px; background: rgba(255,255,255,.35); }
 
-    @media (max-width:560px){
-      .scene{height:92vh;}
-      .book{bottom:150px;}
-      .stand{height:110px;}
-      .s{display:none;}
-      .counter{min-width:auto;}
-      .paper{width:100%;}
+    /* ===== Rotate overlay (mobile portrait) ===== */
+    .rotateOverlay{
+      display:none;
+      position:absolute;
+      inset:0;
+      z-index:20;
+      align-items:center;
+      justify-content:center;
+      background: rgba(0,0,0,.72);
+      backdrop-filter: blur(8px);
+      padding:24px;
+      text-align:center;
+    }
+    .rotateCard{
+      width:min(420px, 100%);
+      padding:16px 16px 14px 16px;
+      border-radius: 18px;
+      border:1px solid var(--line);
+      background: rgba(0,0,0,.55);
+      box-shadow: var(--shadow);
+    }
+    .rotateIcon{
+      font-size:34px;
+      margin-bottom:10px;
+    }
+    .rotateTitle{
+      font-weight:900;
+      font-size:16px;
+      margin-bottom:6px;
+    }
+    .rotateSub{
+      color: var(--muted);
+      font-size:13px;
+      line-height:1.35;
+    }
+
+    /* ===== Responsive: mobile ===== */
+    @media (max-width: 900px){
+      .app{ padding:0; }
+      .shell{
+        width:100%;
+        height:100dvh;        /* ✅ mobile safe viewport */
+        border-radius:0;
+      }
+      .viewer{
+        padding: 74px 10px 52px 10px;
+      }
+      .topbar{
+        left:10px; right:10px; top:10px;
+        padding:10px 10px;
+      }
+      .brandSub{ display:none; } /* жижиг дэлгэц дээр цэвэр */
+      .counter{ min-width:auto; }
+      .footer{
+        left:10px; right:10px; bottom:10px;
+      }
+      img.page{
+        border-radius:10px;
+      }
+    }
+
+    /* ✅ Portrait үед: “утсаа эргүүл” */
+    @media (max-width: 900px) and (orientation: portrait){
+      .rotateOverlay{ display:flex; }
     }
   </style>
 </head>
 
 <body>
-  <div class="wrap">
-    <div class="scene">
-      <div class="book" id="book">
-        <div class="topbar">
-          <div class="title">
-            <div class="badge">📜</div>
-            <div class="txt">
-              <div class="h">Өргөө гэрийн маани </div>
-              <div class="s">Дээш/доош гүйлгээд хуудас солигдоно</div>
-            </div>
+  <!-- =========================
+       HTML
+       ========================= -->
+  <div class="app">
+    <div class="shell" id="shell">
+      <div class="topbar">
+        <div class="brand">
+          <div class="brandIcon">📜</div>
+          <div class="brandText">
+            <div class="brandTitle">Судар уншигч</div>
+            <div class="brandSub">Хэвтээгээр эргүүлж бүтнээр нь уншаарай</div>
           </div>
-
-          <div class="controls">
-            <button class="btn" id="exit" type="button">Гарах</button>
-            <button class="btn" id="prev" type="button">⬆ Өмнөх</button>
-            <button class="btn" id="next" type="button">⬇ Дараах</button>
-            <div class="counter" id="counter">1 / 1</div>
-          </div>
-
         </div>
 
-        <div class="stage">
-          <div class="paper">
-            <div class="paperFrame"></div>
-
-            <img class="page" id="pageImg" alt="Sudra page" />
-            <div class="flipOverlay" id="flipOverlay" aria-hidden="true"></div>
-          </div>
+        <div class="actions">
+          <button class="btn closeBtn" id="close" title="Буцах">✕</button>
+          <button class="btn" id="prev">⬆ Өмнөх</button>
+          <button class="btn" id="next">⬇ Дараах</button>
+          <div class="counter" id="counter">1 / 1</div>
         </div>
       </div>
 
-      <div class="stand"></div>
+      <div class="viewer">
+        <div class="paper">
+          <img class="page" id="pageImg" alt="Sudra page" />
+        </div>
+      </div>
 
       <div class="footer">
         <span>Developed by <b>Bodisadva</b></span>
+        <span class="dot"></span>
+        <span>Sudra Reader</span>
+      </div>
+
+      <div class="rotateOverlay" id="rotateOverlay">
+        <div class="rotateCard">
+          <div class="rotateIcon">📱↻</div>
+          <div class="rotateTitle">Утсаа эргүүлээрэй</div>
+          <div class="rotateSub">
+            Судар бүтнээрээ харагдахын тулд утсаа хэвтээ (landscape) байрлалд эргүүлж уншаарай.
+          </div>
+        </div>
       </div>
     </div>
   </div>
 
+  <!-- =========================
+       JS
+       ========================= -->
   <script>
-    // ✅ Зургууд чинь repo root дээр байгаа: 158.jpg ...
+    // зурагнууд repo root дээр байна
     const PAGES = ["158.jpg","159.jpg","160.jpg","161.jpg","162.jpg"];
 
-    const book = document.getElementById("book");
-    const img = document.getElementById("pageImg");
-    const flipOverlay = document.getElementById("flipOverlay");
+    const pageImg = document.getElementById("pageImg");
     const counter = document.getElementById("counter");
     const prevBtn = document.getElementById("prev");
     const nextBtn = document.getElementById("next");
-    const exitBtn = document.getElementById("exit");
+    const closeBtn = document.getElementById("close");
 
+    const RETURN_URL = "https://sites.google.com/view/bodisadva/home-mantra";
 
     let i = 0;
     let lock = false;
 
-    // --- Preload (анивчилт арилгана)
+    // preload (анивчилт багасгана)
     const cache = new Map();
     function preload(src){
       if (cache.has(src)) return cache.get(src);
-      const im = new Image();
-      const p = new Promise((res, rej) => {
-        im.onload = () => res(src);
-        im.onerror = () => rej(new Error("Failed: " + src));
+      const img = new Image();
+      const p = new Promise((res, rej)=>{
+        img.onload = () => res(true);
+        img.onerror = () => rej(false);
       });
-      im.src = src;
+      img.src = src;
       cache.set(src, p);
       return p;
     }
@@ -350,144 +346,96 @@
       nextBtn.disabled = (i === PAGES.length - 1) || lock;
     }
 
-    function setBase(src){
-      img.src = src;
-    }
-
-    // --- Smooth vertical flip
-    async function flipTo(ni){
-      if (lock) return;
-      if (ni < 0 || ni >= PAGES.length) return;
-
+    async function show(idx){
+      if (idx < 0 || idx >= PAGES.length) return;
       lock = true;
       ui();
 
-      const from = PAGES[i];
-      const to = PAGES[ni];
+      const src = PAGES[idx];
+      try { await preload(src); } catch(e) {}
 
-      // preload both images to avoid blink
-      try{
-        await Promise.all([preload(from), preload(to)]);
-      }catch(e){
-        // fallback: just swap
-        setBase(to);
-        i = ni;
-        lock = false;
-        ui();
-        return;
-      }
-
-      // prepare overlay sheet with FROM page
-      flipOverlay.innerHTML = "";
-      const sheet = document.createElement("div");
-      sheet.className = "flipSheet";
-      const sheetImg = document.createElement("img");
-      sheetImg.src = from;
-      const shadow = document.createElement("div");
-      shadow.className = "foldShadow";
-      sheet.appendChild(sheetImg);
-      sheet.appendChild(shadow);
-      flipOverlay.appendChild(sheet);
-
-      // put TO page underneath (base) BEFORE animation starts
-      setBase(to);
-
-      // animate folding upward
-      const D = 720; // longer = smoother
-      const start = performance.now();
-
-      function ease(t){
-        return t < 0.5 ? 4*t*t*t : 1 - Math.pow(-2*t + 2, 3)/2;
-      }
-
-      function tick(now){
-        const t = Math.min(1, (now - start) / D);
-        const e = ease(t);
-
-        // fold: 0 -> -95deg
-        const deg = -95 * e;
-        sheet.style.transform = `rotateX(${deg}deg)`;
-
-        // shadow: strongest mid-fold
-        shadow.style.opacity = String(Math.sin(Math.PI * e) * 0.62);
-
-        if (t < 1) requestAnimationFrame(tick);
-        else{
-          // finish
-          flipOverlay.innerHTML = "";
-          i = ni;
+      // зөөлөн солих
+      pageImg.style.transition = "opacity 180ms ease";
+      pageImg.style.opacity = "0";
+      setTimeout(()=>{
+        pageImg.src = src;
+        pageImg.onload = () => {
+          pageImg.style.opacity = "1";
           lock = false;
           ui();
-        }
-      }
-
-      requestAnimationFrame(tick);
+        };
+        // хэрэв onload дахин дуудагдахгүй тохиолдолд fallback
+        setTimeout(()=>{
+          if (lock){
+            pageImg.style.opacity = "1";
+            lock = false;
+            ui();
+          }
+        }, 600);
+      }, 180);
     }
 
     function go(delta){
+      if (lock) return;
       const ni = i + delta;
-      flipTo(ni);
+      if (ni < 0 || ni >= PAGES.length) return;
+      i = ni;
+      show(i);
     }
 
-    // ✅ Buttons (works)
-    prevBtn.addEventListener("click", () => go(-1));
-    nextBtn.addEventListener("click", () => go(1));
-    // ✅ Exit button (back to Google Sites home)
-      const RETURN_URL = "https://sites.google.com/view/bodisadva/home-mantra";
-      
-      exitBtn.addEventListener("click", () => {
-        try {
-          if (window.top !== window.self) {
-            window.top.location.href = RETURN_URL;
-            return;
-          }
-        } catch (e) {}
-        window.location.href = RETURN_URL;
-      });
+    // buttons
+    prevBtn.addEventListener("click", ()=>go(-1));
+    nextBtn.addEventListener("click", ()=>go(1));
 
-    // wheel / trackpad
-    let wheelAccum = 0;
-    let wheelTimer = null;
-    book.addEventListener("wheel", (e)=>{
+    // close -> Google Sites home
+    closeBtn.addEventListener("click", ()=>{
+      // iframe дотор байвал parent руу чиглүүлэхийг оролдоно
+      try{
+        if (window.top !== window.self){
+          window.top.location.href = RETURN_URL;
+          return;
+        }
+      }catch(e){}
+      window.location.href = RETURN_URL;
+    });
+
+    // wheel / trackpad (desktop)
+    let accum = 0;
+    let timer = null;
+    document.getElementById("shell").addEventListener("wheel", (e)=>{
+      // iframe дотор давхар scroll үүсэхгүйн тулд
       e.preventDefault();
       if (lock) return;
-
-      wheelAccum += e.deltaY;
-      clearTimeout(wheelTimer);
-      wheelTimer = setTimeout(()=>{ wheelAccum = 0; }, 140);
+      accum += e.deltaY;
+      clearTimeout(timer);
+      timer = setTimeout(()=>accum=0, 120);
 
       const TH = 140;
-      if (wheelAccum > TH){ wheelAccum = 0; go(1); }
-      if (wheelAccum < -TH){ wheelAccum = 0; go(-1); }
+      if (accum > TH){ accum = 0; go(1); }
+      if (accum < -TH){ accum = 0; go(-1); }
     }, {passive:false});
 
-    // swipe
+    // swipe (mobile)
     let y0 = null;
-    book.addEventListener("touchstart", (e)=>{ y0 = e.touches[0].clientY; }, {passive:true});
-    book.addEventListener("touchend", (e)=>{
+    document.getElementById("shell").addEventListener("touchstart", (e)=>{
+      y0 = e.touches[0].clientY;
+    }, {passive:true});
+
+    document.getElementById("shell").addEventListener("touchend", (e)=>{
       if (y0 === null || lock) return;
       const y1 = e.changedTouches[0].clientY;
       const dy = y1 - y0;
       y0 = null;
+
       const TH = 42;
       if (dy > TH) go(-1);
       else if (dy < -TH) go(1);
     }, {passive:true});
 
-    // keyboard
-    window.addEventListener("keydown", (e)=>{
-      if (lock) return;
-      if (e.key === "ArrowDown" || e.key === "PageDown") go(1);
-      if (e.key === "ArrowUp" || e.key === "PageUp") go(-1);
-    });
-
     // init
     (async ()=>{
-      // preload first 2 pages to make first flip smooth
       await preload(PAGES[0]).catch(()=>{});
-      if (PAGES[1]) await preload(PAGES[1]).catch(()=>{});
-      setBase(PAGES[0]);
-      ui();
+      show(0);
     })();
   </script>
 </body>
