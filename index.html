@@ -18,7 +18,6 @@
       --shadow: 0 18px 60px rgba(0,0,0,.55);
     }
 
-    /* ===== Base ===== */
     html, body{
       height:100%;
       margin:0;
@@ -79,10 +78,7 @@
       border:1px solid var(--line);
       flex:0 0 auto;
     }
-    .brandText{
-      min-width:0;
-      line-height:1.1;
-    }
+    .brandText{ min-width:0; line-height:1.1; }
     .brandTitle{
       font-weight:800;
       font-size:13px;
@@ -133,12 +129,9 @@
       text-align:center;
     }
 
-    /* Close button (X) */
+    /* "Гарах" */
     .closeBtn{
-      width:36px;
-      display:grid;
-      place-items:center;
-      padding:8px 0;
+      padding:8px 12px;
     }
 
     /* ===== Viewer ===== */
@@ -168,7 +161,7 @@
       max-height: 100%;
       width:auto;
       height:auto;
-      object-fit: contain;      /* ✅ бүтнээр нь харна */
+      object-fit: contain;
       border-radius: 12px;
       background: rgba(255,255,255,.02);
       box-shadow: 0 10px 30px rgba(0,0,0,.45);
@@ -180,7 +173,7 @@
     /* ===== Footer ===== */
     .footer{
       position:absolute;
-      left:14px; right:14px; bottom:12px;
+      left:14px; right:14px; bottom:24px; /* ⬅ бага зэрэг дээш */
       display:flex;
       align-items:center;
       justify-content:center;
@@ -191,7 +184,6 @@
       pointer-events:none;
     }
     .footer b{ color: var(--text); font-weight:850; }
-    .dot{ width:5px; height:5px; border-radius:99px; background: rgba(255,255,255,.35); }
 
     /* ===== Rotate overlay (mobile portrait) ===== */
     .rotateOverlay{
@@ -234,27 +226,21 @@
       .app{ padding:0; }
       .shell{
         width:100%;
-        height:100dvh;        /* ✅ mobile safe viewport */
+        height:100dvh;
         border-radius:0;
       }
-      .viewer{
-        padding: 74px 10px 52px 10px;
-      }
+      .viewer{ padding: 74px 10px 52px 10px; }
       .topbar{
         left:10px; right:10px; top:10px;
         padding:10px 10px;
       }
-      .brandSub{ display:none; } /* жижиг дэлгэц дээр цэвэр */
+      .brandSub{ display:none; }
       .counter{ min-width:auto; }
-      .footer{
-        left:10px; right:10px; bottom:10px;
-      }
-      img.page{
-        border-radius:10px;
-      }
+      .footer{ left:10px; right:10px; bottom:20px; }
+      img.page{ border-radius:10px; }
     }
 
-    /* ✅ Portrait үед: “утсаа эргүүл” */
+    /* Portrait үед: “утсаа эргүүл” */
     @media (max-width: 900px) and (orientation: portrait){
       .rotateOverlay{ display:flex; }
     }
@@ -262,9 +248,7 @@
 </head>
 
 <body>
-  <!-- =========================
-       HTML
-       ========================= -->
+  <!-- HTML -->
   <div class="app">
     <div class="shell" id="shell">
       <div class="topbar">
@@ -277,10 +261,10 @@
         </div>
 
         <div class="actions">
-          <button class="btn closeBtn" id="close" title="Буцах">✕</button>
           <button class="btn" id="prev">⬆ Өмнөх</button>
           <button class="btn" id="next">⬇ Дараах</button>
           <div class="counter" id="counter">1 / 1</div>
+          <button class="btn closeBtn" id="close" title="Буцах">Гарах</button>
         </div>
       </div>
 
@@ -292,8 +276,6 @@
 
       <div class="footer">
         <span>Developed by <b>Bodisadva</b></span>
-        <span class="dot"></span>
-        <span>Sudra Reader</span>
       </div>
 
       <div class="rotateOverlay" id="rotateOverlay">
@@ -302,31 +284,29 @@
           <div class="rotateTitle">Утсаа эргүүлээрэй</div>
           <div class="rotateSub">
             Судар бүтнээрээ харагдахын тулд утсаа хэвтээ (landscape) байрлалд эргүүлж уншаарай.
+            <br><br>
+            Хэрвээ эргэхгүй байвал “Auto-rotate / Screen rotation” түгжээг тайлаарай.
           </div>
         </div>
       </div>
     </div>
   </div>
 
-  <!-- =========================
-       JS
-       ========================= -->
+  <!-- JS -->
   <script>
-    // зурагнууд repo root дээр байна
     const PAGES = ["158.jpg","159.jpg","160.jpg","161.jpg","162.jpg"];
+    const RETURN_URL = "https://sites.google.com/view/bodisadva/home-mantra";
 
     const pageImg = document.getElementById("pageImg");
     const counter = document.getElementById("counter");
     const prevBtn = document.getElementById("prev");
     const nextBtn = document.getElementById("next");
     const closeBtn = document.getElementById("close");
-
-    const RETURN_URL = "https://sites.google.com/view/bodisadva/home-mantra";
+    const shell = document.getElementById("shell");
 
     let i = 0;
     let lock = false;
 
-    // preload (анивчилт багасгана)
     const cache = new Map();
     function preload(src){
       if (cache.has(src)) return cache.get(src);
@@ -354,24 +334,26 @@
       const src = PAGES[idx];
       try { await preload(src); } catch(e) {}
 
-      // зөөлөн солих
       pageImg.style.transition = "opacity 180ms ease";
       pageImg.style.opacity = "0";
+
       setTimeout(()=>{
         pageImg.src = src;
+
         pageImg.onload = () => {
           pageImg.style.opacity = "1";
           lock = false;
           ui();
         };
-        // хэрэв onload дахин дуудагдахгүй тохиолдолд fallback
+
+        // fallback (зарим browser onload trigger хийхгүй үед)
         setTimeout(()=>{
           if (lock){
             pageImg.style.opacity = "1";
             lock = false;
             ui();
           }
-        }, 600);
+        }, 650);
       }, 180);
     }
 
@@ -383,13 +365,10 @@
       show(i);
     }
 
-    // buttons
     prevBtn.addEventListener("click", ()=>go(-1));
     nextBtn.addEventListener("click", ()=>go(1));
 
-    // close -> Google Sites home
     closeBtn.addEventListener("click", ()=>{
-      // iframe дотор байвал parent руу чиглүүлэхийг оролдоно
       try{
         if (window.top !== window.self){
           window.top.location.href = RETURN_URL;
@@ -399,13 +378,13 @@
       window.location.href = RETURN_URL;
     });
 
-    // wheel / trackpad (desktop)
+    // Wheel / trackpad
     let accum = 0;
     let timer = null;
-    document.getElementById("shell").addEventListener("wheel", (e)=>{
-      // iframe дотор давхар scroll үүсэхгүйн тулд
+    shell.addEventListener("wheel", (e)=>{
       e.preventDefault();
       if (lock) return;
+
       accum += e.deltaY;
       clearTimeout(timer);
       timer = setTimeout(()=>accum=0, 120);
@@ -415,13 +394,13 @@
       if (accum < -TH){ accum = 0; go(-1); }
     }, {passive:false});
 
-    // swipe (mobile)
+    // Swipe
     let y0 = null;
-    document.getElementById("shell").addEventListener("touchstart", (e)=>{
+    shell.addEventListener("touchstart", (e)=>{
       y0 = e.touches[0].clientY;
     }, {passive:true});
 
-    document.getElementById("shell").addEventListener("touchend", (e)=>{
+    shell.addEventListener("touchend", (e)=>{
       if (y0 === null || lock) return;
       const y1 = e.changedTouches[0].clientY;
       const dy = y1 - y0;
@@ -432,7 +411,7 @@
       else if (dy < -TH) go(1);
     }, {passive:true});
 
-    // init
+    // Init
     (async ()=>{
       await preload(PAGES[0]).catch(()=>{});
       show(0);
